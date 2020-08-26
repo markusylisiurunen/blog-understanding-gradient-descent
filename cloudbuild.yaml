@@ -1,16 +1,15 @@
 steps:
-    - name: gcr.io/cloud-builders/docker
-      args:
-        - build
-        - -t
-        - eu.gcr.io/markus-ylisiurunen/understanding-gradient-descent-mnist-neural-network:$_TAG
-        - -f
-        - Dockerfile
-        - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - eu.gcr.io/markus-ylisiurunen/understanding-gradient-descent-mnist-neural-network:$_TAG
+      - -f
+      - Dockerfile
+      - .
 
-  substitutions:
-    _TAG:
+substitutions:
+  _TAG:
 
-  images:
-    - eu.gcr.io/markus-ylisiurunen/understanding-gradient-descent-mnist-neural-network:$_TAG
-  
+images:
+  - eu.gcr.io/markus-ylisiurunen/understanding-gradient-descent-mnist-neural-network:$_TAG
