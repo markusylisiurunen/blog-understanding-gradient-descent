@@ -1,0 +1,11 @@
+# ignore everything
+**
+
+# allow the Dockerfile
+!Dockerfile
+
+# allow the model
+!model/**
+
+# allow the server
+!server/**
