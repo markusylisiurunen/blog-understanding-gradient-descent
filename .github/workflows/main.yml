@@ -1,0 +1,46 @@
+name: Build & deploy
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          project_id: markus-ylisiurunen
+          service_account_key: ${{ secrets.GOOGLE_CLOUD_PLATFORM_KEY }}
+          export_default_credentials: true
+
+      - run: |
+          export GIT_COMMIT_HASH=$(git rev-parse HEAD)
+          gcloud builds submit --substitutions=_TAG=${GIT_COMMIT_HASH} --config cloudbuild.yaml .
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          project_id: markus-ylisiurunen
+          service_account_key: ${{ secrets.GOOGLE_CLOUD_PLATFORM_KEY }}
+          export_default_credentials: true
+
+      - run: |
+          export GIT_COMMIT_HASH=$(git rev-parse HEAD)
+
+          gcloud run deploy understanding-gradient-descent-mnist-neural-network \
+            --image eu.gcr.io/markus-ylisiurunen/understanding-gradient-descent-mnist-neural-network:${GIT_COMMIT_HASH} \
+            --region europe-west1 \
+            --platform managed \
+            --max-instances 1 \
+            --allow-unauthenticated
